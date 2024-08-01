@@ -49,6 +49,7 @@ namespace DefaultNamespace {
         }
 
         public void Kill(DeathCause deathCause = DeathCause.None) {
+            Debug.Log("1");
             IsDead = true;
             EventManager.Trigger(new PlayerDeathEvent {
                 Player = this,
@@ -72,6 +73,7 @@ namespace DefaultNamespace {
                 return true;
             }
             player = null;
+            Debug.Log("NULL");
             return false;
         }
 

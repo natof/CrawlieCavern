@@ -28,12 +28,14 @@ namespace decor {
         private Vector3 _offset = Vector3.zero;
 
         private Light2D Light { get; set; }
-        
-        private void Start() {
+
+        private void Awake() {
             Light = GetComponentInChildren<Light2D>();
             LockedDoor = lockedDoor.GetComponent<LockedDoor>();
             SpriteRenderer = GetComponent<SpriteRenderer>();
             Animator = GetComponent<Animator>();
+
+            Player = Player.GetPlayer();
         }
 
         private void Update() {

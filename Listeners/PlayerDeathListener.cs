@@ -5,7 +5,7 @@ namespace DefaultNamespace {
     public static class PlayerDeathListener {
         public static void OnPlayerDeathEvent(PlayerDeathEvent @event) {
             Player player = @event.Player;
-
+            Debug.Log("1AWWW");
             player.PlayerDataManager.PlayerData.DeathCount++;
             CanvaManager.Get().HudCanva.UpdateDeathCounter();
 

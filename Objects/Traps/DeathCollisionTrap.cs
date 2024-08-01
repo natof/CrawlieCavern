@@ -5,9 +5,12 @@ namespace DefaultNamespace {
     public abstract class DeathCollisionTrap : TrapObject {
 
         private void OnTriggerEnter2D(Collider2D other) {
-            if (Player.TryGetPlayer(other.gameObject, out Player player)) {
+            Debug.Log("CHECK");
+            if (!Player.TryGetPlayer(other.gameObject, out Player player)) {
+                Debug.Log("NOP");
                 return;
             }
+            Debug.Log("1");
             player.Kill(GetPlayerDeathCause());
         }
 
