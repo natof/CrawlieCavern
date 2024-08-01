@@ -12,8 +12,7 @@ namespace DefaultNamespace {
         public CameraShake CameraShake { get; set; }
         public Rigidbody2D Rigidbody2D { get; set; }
         public SpriteRenderer SpriteRenderer { get; set; }
-        private PlayerMovement PlayerMovement { get; set; }
-
+        public PlayerMovement PlayerMovement { get; set; }
         public PlayerDataManager PlayerDataManager { get; set; }
 
         public bool IsDead { get; set; }
