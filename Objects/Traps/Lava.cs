@@ -1,25 +1,28 @@
-using System;
 using UnityEngine;
 
-namespace decor {
-    public class Lava : MonoBehaviour {
-        private Rigidbody2D _rigidbody2D;
-        public bool _canMotion = true;
-        private void Start() {
-            _rigidbody2D = GetComponent<Rigidbody2D>();
+namespace DefaultNamespace {
+    public class Lava : DeathCollisionTrap {
+        private Rigidbody2D Rb { get; set; }
+        private GameManager GameManager { get; set; }
+        
+        private const float Speed = 0.05f;
+        
+        private void Awake() {
+            Rb = GetComponent<Rigidbody2D>();
+            GameManager = GameManager.Get();
         }
 
-        public void Update()
+        public void Update() 
         {
-            if (!_canMotion) {
-                _rigidbody2D.velocity = Vector2.zero;
+            if (!GameManager.GameIsInProgress) {
+                Rb.velocity = Vector2.zero;
                 return;
             }
-            _rigidbody2D.AddForce(new Vector2(0f, 0.05f), ForceMode2D.Force);
+            Rb.AddForce(new Vector2(0f, Speed), ForceMode2D.Force);
         }
 
-        public void Stop() {
-            _canMotion = false;
+        protected override DeathCause GetPlayerDeathCause() {
+            return DeathCause.Fire;
         }
     }
 }
