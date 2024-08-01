@@ -1,56 +1,52 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 namespace decor {
     public class FloatingKey : MonoBehaviour {
-        
-        //TODO CLEAN
-        
-        public GameObject player;
         public GameObject lockedDoor;
+        public Sprite keySide;
         
-        private bool _isTake;
-        private bool _keyOpenDoor;
+        private LockedDoor LockedDoor { get; set; }
+        private SpriteRenderer SpriteRenderer { get; set; }
+        private Animator Animator { get; set; }
+        private Player Player { get; set; }
+        private bool IsTake { get; set; }
+        private bool KeyOpenDoor { get; set; }
 
         private const float MaxDistanceForTake = 1f;
         private const float MaxDistanceMove = 1.5f;
-
         private const float MaxDistanceDoor = 4f;
-
         private const float SmoothTime = 0.6f;
         private const float OscillationAmplitude = 0.1f;
         private const float OscillationFrequency = 2f;
+
         private Vector3 _velocity = Vector3.zero;
         private Vector3 _offset = Vector3.zero;
 
-        private Light2D _light;
-        private LockedDoor _lockedDoor;
-        private SpriteRenderer _spriteRenderer;
-        private Animator _animator;
+        private Light2D Light { get; set; }
         
-        public Sprite keySide;
-
         private void Start() {
-            _light = GetComponentInChildren<Light2D>();
-            _lockedDoor = lockedDoor.GetComponent<LockedDoor>();
-            _spriteRenderer = GetComponent<SpriteRenderer>();
-            _animator = GetComponent<Animator>();
+            Light = GetComponentInChildren<Light2D>();
+            LockedDoor = lockedDoor.GetComponent<LockedDoor>();
+            SpriteRenderer = GetComponent<SpriteRenderer>();
+            Animator = GetComponent<Animator>();
         }
 
         private void Update() {
-            if (_keyOpenDoor) {
-                if (Vector2.Distance(_lockedDoor.GetPositionPadLock(), transform.position) <= 0.1f) {
+            if (KeyOpenDoor) {
+                if (Vector2.Distance(LockedDoor.GetPositionPadLock(), transform.position) <= 0.1f) {
                     StartCoroutine(StartOpenDoor());
                     return;
                 }
             }
             
-            if (_isTake) {
+            if (IsTake) {
                 if (PlayerIsCloseDoor(MaxDistanceDoor)) {
-                    _keyOpenDoor = true;
+                    KeyOpenDoor = true;
                 }
                 return;
             }
@@ -59,19 +55,19 @@ namespace decor {
                 return;
             }
             
-            _isTake = true;
+            IsTake = true;
             StartCoroutine(PickupAnimation());
         }
 
         private void FixedUpdate() {
-            if (!_isTake) {
+            if (!IsTake) {
                 return;
             }
             
             Vector3? targetPosition = null;
             bool canOscilation = true;
-            if (_keyOpenDoor) {
-                targetPosition = _lockedDoor.GetPositionPadLock();
+            if (KeyOpenDoor) {
+                targetPosition = LockedDoor.GetPositionPadLock();
 
                 Quaternion targetRotaion = Quaternion.Euler(0, 0, 90);
                 if (Quaternion.Angle(transform.rotation, targetRotaion) > 0.1f) {
@@ -79,7 +75,7 @@ namespace decor {
                 }
                 canOscilation = false;
             } else if (!PlayerIsClose(MaxDistanceMove)) {
-                targetPosition = player.transform.position;
+                targetPosition = Player.transform.position;
             }
             
             if (targetPosition == null) {
@@ -99,11 +95,11 @@ namespace decor {
         }
 
         private bool PlayerIsClose(float distanceCheck) {
-            return Vector2.Distance(transform.position, player.transform.position) <= distanceCheck;
+            return Vector2.Distance(transform.position, Player.transform.position) <= distanceCheck;
         }
 
         private bool PlayerIsCloseDoor(float distanceCheck) {
-            return Vector2.Distance(lockedDoor.transform.position, player.transform.position) <= distanceCheck;
+            return Vector2.Distance(lockedDoor.transform.position, Player.transform.position) <= distanceCheck;
         }
         
         private IEnumerator PickupAnimation() {
@@ -111,14 +107,14 @@ namespace decor {
             const float duration = 0.5f;
             float elapsed = 0f;
 
-            float initialLight = _light.intensity;
+            float initialLight = Light.intensity;
             float targetIntensity = 2f;
 
             Vector3 initialScale = transform.localScale;
             Vector3 targetScale = initialScale * 2;
             
             while (elapsed < duration) {
-                _light.intensity = Mathf.Lerp(initialLight, targetIntensity, elapsed / duration);
+                Light.intensity = Mathf.Lerp(initialLight, targetIntensity, elapsed / duration);
                 transform.localScale = Vector3.Lerp(initialScale, targetScale, elapsed / duration);
                 transform.Rotate(new Vector3(0, 0, 360 * 2) * Time.deltaTime);
                 elapsed += Time.deltaTime;
@@ -127,7 +123,7 @@ namespace decor {
 
             elapsed = 0;
             while (elapsed < duration) {
-                _light.intensity = Mathf.Lerp(targetIntensity, initialLight, elapsed / duration);
+                Light.intensity = Mathf.Lerp(targetIntensity, initialLight, elapsed / duration);
                 transform.localScale = Vector3.Lerp(targetScale, initialScale, elapsed / duration);
                 elapsed += Time.deltaTime;
                 yield return null;
@@ -136,10 +132,10 @@ namespace decor {
 
 
         private IEnumerator StartOpenDoor() {
-            _animator.enabled = false;
-            _spriteRenderer.sprite = keySide;
+            Animator.enabled = false;
+            SpriteRenderer.sprite = keySide;
             yield return new WaitForSeconds(1);
-            _lockedDoor.Open();
+            LockedDoor.Open();
             Destroy(gameObject);
         }
     }
