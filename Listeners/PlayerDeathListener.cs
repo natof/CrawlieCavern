@@ -11,6 +11,8 @@ namespace DefaultNamespace {
 
             player.SetFreeze();
             player.Animator.SetInteger("death", (int)@event.DeathCause);
+
+            GameManager.Get().GameIsInProgress = false;
             player.StartCoroutine(SendDeathScreen());
         }
 
