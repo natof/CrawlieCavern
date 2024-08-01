@@ -110,6 +110,10 @@ namespace DefaultNamespace {
         public void Jump(float force) {
             Player.Rigidbody2D.AddForce(new Vector2(0f, force), ForceMode2D.Impulse);
             IsJumping = false;
+            
+            EventManager.Trigger(new PlayerJumpEvent {
+                Player = Player
+            });
         }
 
         private void StartDash() {
