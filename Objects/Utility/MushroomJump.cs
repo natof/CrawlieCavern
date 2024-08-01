@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace DefaultNamespace {
-    public class MushroomJump : MonoBehaviour {
+    public class MushroomJump : UtilityObject {
         private Animator Animator { get; set; }
         private const float JumpVelocity = 10;
         
@@ -10,7 +10,7 @@ namespace DefaultNamespace {
         }
 
         private void OnTriggerEnter2D(Collider2D other) {
-            if (Player.TryGetPlayer(other.gameObject, out Player player)) {
+            if (!Player.TryGetPlayer(other.gameObject, out Player player)) {
                 return;
             }
             player.PlayerMovement.Jump(JumpVelocity);
